@@ -5,10 +5,36 @@ class TaskForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id : "",
             name : "",
             status : true
         }
     }
+
+    componentDidMount() {
+        var { task } = this.props;
+        if(task.id !== "") {
+            this.setState({
+                id: task.id,
+                name: task.name,
+                status: task.status
+            })
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        var { task } = this.props;
+        console.log(prevProps.task.id);
+        console.log(task.id);
+        if(prevProps.task.id !== task.id) {
+            this.setState({
+                id: task.id,
+                name: task.name,
+                status: task.status
+            })
+        }
+    }
+    
     
     closeForm = () => {
         this.props.closeForm();

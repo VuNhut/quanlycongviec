@@ -3,14 +3,10 @@ import ListItem from './ListItem';
 
 class List extends Component {
 
-    deleteItem = (id) => {
-        this.props.deleteItem(id);
-    }
-
     render() {
         var { tasks } = this.props;
         var elem = tasks.map((task, index) => {
-            return <ListItem key= { task.id } index= { index } task= {task} deleteItem = { this.deleteItem } />;
+            return <ListItem key= { task.id } index= { index } task= {task} deleteItem = { this.props.deleteItem } updateItem = { this.props.updateItem } />;
         }); 
         return (
             <table className="table">
