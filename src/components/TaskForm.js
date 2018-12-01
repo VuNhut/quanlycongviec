@@ -24,17 +24,14 @@ class TaskForm extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         var { task } = this.props;
-        console.log(prevProps.task.id);
-        console.log(task.id);
-        if(prevProps.task.id !== task.id) {
+        if(prevProps.task.id !== task.id && task.id !== prevState.id) {
             this.setState({
                 id: task.id,
                 name: task.name,
                 status: task.status
             })
         }
-    }
-    
+    }    
     
     closeForm = () => {
         this.props.closeForm();
@@ -66,9 +63,10 @@ class TaskForm extends Component {
     }
 
     render() {
+        var { id } = this.state;
         return (
             <div className="col-4 task-form">
-                <p className="alert alert-warning mt-2">Thêm công việc<span className="icon-close" onClick={ this.closeForm }><i className="far fa-times-circle"></i></span></p>
+                <p className="alert alert-warning mt-2">{ id !== "" ? "Cập nhật công việc" : "Thêm công việc" }<span className="icon-close" onClick={ this.closeForm }><i className="far fa-times-circle"></i></span></p>
                 <form onSubmit = { this.onSubmit }>
                     <div className="form-group">
                         <label><strong>Tên:</strong></label>

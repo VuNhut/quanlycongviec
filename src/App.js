@@ -64,9 +64,17 @@ class App extends Component {
     }
 
     onSubmit = (data) => {
-        data.id = randomstring.generate();
         var { tasks } = this.state;
-        tasks.push(data)
+        if (data.id !== "") {
+            var index = this.findIndex(data.id);
+            if (index !== -1) {
+                tasks[index].name = data.name;
+                tasks[index].status = data.status;
+            }
+        } else {
+            data.id = randomstring.generate();
+            tasks.push(data);
+        }
         this.setState({
             tasks : tasks
         });
