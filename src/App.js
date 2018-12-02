@@ -12,7 +12,11 @@ class App extends Component {
         this.state = {
             tasks : [],
             isDisplayForm : false,
-            taskEditing : {id: "", name: "", status: true}
+            taskEditing : {id: "", name: "", status: true},
+            filter : {
+                name : "",
+                status : -1
+            }
         }
     }
     
@@ -113,10 +117,26 @@ class App extends Component {
         })
         return result;
     }
+
+    handleFilter = (filterName, filterStatus) => {
+        this.setState({
+            filter : {
+                name : filterName,
+                status : filterStatus
+            }
+        });
+    }
     
     render() {
-        var { tasks, isDisplayForm, taskEditing } = this.state;
+        var { tasks, isDisplayForm, taskEditing, filter } = this.state;
         var form = isDisplayForm ? <TaskForm dataSubmit = { this.onSubmit } closeForm = { this.closeForm } task = { taskEditing } /> : "";
+        tasks = tasks.filter(task => {
+            if (filter.status !== -1) {
+                return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1 && task.status === (filter.status === 1 ? true : false);
+            } else {
+                return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
+            }
+        });
         return (
             <div className="container">
                 <div className="row">
@@ -128,7 +148,7 @@ class App extends Component {
                             <Search />
                             <Sort />
                         </div>
-                        <List tasks = { tasks } deleteItem = { this.deleteItem } updateItem = { this.updateItem } />
+                        <List tasks = { tasks } deleteItem = { this.deleteItem } updateItem = { this.updateItem } handleFilter = { this.handleFilter } />
                     </div>
                 </div>
             </div>
