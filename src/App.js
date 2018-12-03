@@ -16,6 +16,11 @@ class App extends Component {
             filter : {
                 name : "",
                 status : -1
+            },
+            search : "",
+            sort : {
+                asc : false,
+                desc : false
             }
         }
     }
@@ -126,9 +131,24 @@ class App extends Component {
             }
         });
     }
+
+    handleSearch = (searchText) => {
+        this.setState({
+            search : searchText
+        });
+    }
+
+    handleSort = (sortAsc, sortDesc) => {
+        this.setState({
+            sort : {
+                asc : sortAsc,
+                desc : sortDesc
+            }
+        });
+    }
     
     render() {
-        var { tasks, isDisplayForm, taskEditing, filter } = this.state;
+        var { tasks, isDisplayForm, taskEditing, filter, search, sort } = this.state;
         var form = isDisplayForm ? <TaskForm dataSubmit = { this.onSubmit } closeForm = { this.closeForm } task = { taskEditing } /> : "";
         tasks = tasks.filter(task => {
             if (filter.status !== -1) {
@@ -137,6 +157,14 @@ class App extends Component {
                 return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
             }
         });
+        tasks = tasks.filter(task => {
+                return task.name.toLowerCase().indexOf(search) !== -1;
+        });
+        if (sort.asc || sort.desc) {
+            tasks.sort((a, b) => {
+                return a.name > b.name ? sort.asc ? 1 : -1 : sort.asc ? -1 : 1;
+            });
+        }
         return (
             <div className="container">
                 <div className="row">
@@ -145,8 +173,8 @@ class App extends Component {
                         <button className="btn btn-primary" onClick= { this.displayForm }><span className="mr-2"><i className="fas fa-plus"></i></span>Thêm công việc</button>
                         <button className="btn btn-info ml-2" onClick={ this.generateData } >Generate</button>
                         <div className="form-group">
-                            <Search />
-                            <Sort />
+                            <Search searchText = { this.handleSearch } />
+                            <Sort sort = { this.handleSort } />
                         </div>
                         <List tasks = { tasks } deleteItem = { this.deleteItem } updateItem = { this.updateItem } handleFilter = { this.handleFilter } />
                     </div>
