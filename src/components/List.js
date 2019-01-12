@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import ListItem from './ListItem';
 import ListItemNone from './ListItemNone';
+import { showTask } from '../actions/index';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 class List extends Component {
     constructor(props) {
@@ -59,4 +62,16 @@ class List extends Component {
     }
 }
 
-export default List;
+const mapStateToProps = state => {
+    return {
+        tasks : state.task
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        action : bindActionCreators(showTask, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);

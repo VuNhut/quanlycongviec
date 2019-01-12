@@ -4,13 +4,16 @@ import TaskForm from './components/TaskForm';
 import Search from './components/Search';
 import Sort from './components/Sort';
 import List from './components/List';
+import { bindActionCreators } from 'redux';
+import { showTask } from './actions';
+import { connect } from 'react-redux';
+
 var randomstring = require("randomstring");
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tasks : [],
             isDisplayForm : false,
             taskEditing : {id: "", name: "", status: true},
             filter : {
@@ -25,39 +28,39 @@ class App extends Component {
         }
     }
     
-    componentDidMount() {
-        if (localStorage && localStorage.getItem('tasks')) {
-            var tasks = JSON.parse(localStorage.getItem('tasks'));
-            this.setState({
-                tasks : tasks
-            });
-        }
-    }
+    // componentDidMount() {
+    //     if (localStorage && localStorage.getItem('tasks')) {
+    //         var tasks = JSON.parse(localStorage.getItem('tasks'));
+    //         this.setState({
+    //             tasks : tasks
+    //         });
+    //     }
+    // }
     
     
-    generateData = () => {
-        var tasks = [
-            {
-                id: randomstring.generate(),
-                name: 'Học Angular',
-                status: true
-            },
-            {
-                id: randomstring.generate(),
-                name: 'Học React',
-                status: false
-            },
-            {
-                id: randomstring.generate(),
-                name: 'Học PHP',
-                status: true
-            }
-        ];
-        this.setState({
-            tasks: tasks
-        })
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    // generateData = () => {
+    //     var tasks = [
+    //         {
+    //             id: randomstring.generate(),
+    //             name: 'Học Angular',
+    //             status: true
+    //         },
+    //         {
+    //             id: randomstring.generate(),
+    //             name: 'Học React',
+    //             status: false
+    //         },
+    //         {
+    //             id: randomstring.generate(),
+    //             name: 'Học PHP',
+    //             status: true
+    //         }
+    //     ];
+    //     this.setState({
+    //         tasks: tasks
+    //     })
+    //     localStorage.setItem('tasks', JSON.stringify(tasks));
+    // }
 
     displayForm = () => {
         this.setState({
@@ -72,26 +75,26 @@ class App extends Component {
         });
     }
 
-    onSubmit = (data) => {
-        var { tasks } = this.state;
-        if (data.id !== "") {
-            var index = this.findIndex(data.id);
-            if (index !== -1) {
-                tasks[index].name = data.name;
-                tasks[index].status = data.status;
-            }
-        } else {
-            data.id = randomstring.generate();
-            tasks.push(data);
-        }
-        this.setState({
-            tasks : tasks
-        });
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    // onSubmit = (data) => {
+    //     var { tasks } = this.props;
+    //     if (data.id !== "") {
+    //         var index = this.findIndex(data.id);
+    //         if (index !== -1) {
+    //             tasks[index].name = data.name;
+    //             tasks[index].status = data.status;
+    //         }
+    //     } else {
+    //         data.id = randomstring.generate();
+    //         tasks.push(data);
+    //     }
+    //     this.setState({
+    //         tasks : tasks
+    //     });
+    //     localStorage.setItem('tasks', JSON.stringify(tasks));
+    // }
 
     deleteItem = (id) => {
-        var { tasks } = this.state;
+        var { tasks } = this.props;
         var index = this.findIndex(id);
         if (index !== -1) {
             tasks.splice(index, 1);
@@ -103,7 +106,7 @@ class App extends Component {
     }
 
     updateItem = (id) => {
-        var { tasks } = this.state;
+        var { tasks } = this.props;
         var index = this.findIndex(id);
         var taskEditing = tasks[index];
         this.setState({
@@ -113,7 +116,7 @@ class App extends Component {
     }
 
     findIndex = (idItem) => {
-        var { tasks } = this.state;
+        var { tasks } = this.props;
         var result = -1;
         tasks.forEach((task, index) => {
             if (task.id === idItem) {
@@ -148,23 +151,23 @@ class App extends Component {
     }
     
     render() {
-        var { tasks, isDisplayForm, taskEditing, filter, search, sort } = this.state;
-        var form = isDisplayForm ? <TaskForm dataSubmit = { this.onSubmit } closeForm = { this.closeForm } task = { taskEditing } /> : "";
-        tasks = tasks.filter(task => {
-            if (filter.status !== -1) {
-                return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1 && task.status === (filter.status === 1 ? true : false);
-            } else {
-                return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
-            }
-        });
-        tasks = tasks.filter(task => {
-                return task.name.toLowerCase().indexOf(search) !== -1;
-        });
-        if (sort.asc || sort.desc) {
-            tasks.sort((a, b) => {
-                return a.name > b.name ? sort.asc ? 1 : -1 : sort.asc ? -1 : 1;
-            });
-        }
+        var { isDisplayForm, taskEditing, filter, search, sort } = this.state;
+        var form = isDisplayForm ? <TaskForm closeForm = { this.closeForm } task = { taskEditing } /> : "";
+        // tasks = tasks.filter(task => {
+        //     if (filter.status !== -1) {
+        //         return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1 && task.status === (filter.status === 1 ? true : false);
+        //     } else {
+        //         return task.name.toLowerCase().indexOf(filter.name.toLowerCase()) !== -1;
+        //     }
+        // });
+        // tasks = tasks.filter(task => {
+        //         return task.name.toLowerCase().indexOf(search) !== -1;
+        // });
+        // if (sort.asc || sort.desc) {
+        //     tasks.sort((a, b) => {
+        //         return a.name > b.name ? sort.asc ? 1 : -1 : sort.asc ? -1 : 1;
+        //     });
+        // }
         return (
             <div className="container">
                 <div className="row">
@@ -176,7 +179,7 @@ class App extends Component {
                             <Search searchText = { this.handleSearch } />
                             <Sort sort = { this.handleSort } />
                         </div>
-                        <List tasks = { tasks } deleteItem = { this.deleteItem } updateItem = { this.updateItem } handleFilter = { this.handleFilter } />
+                        <List deleteItem = { this.deleteItem } updateItem = { this.updateItem } handleFilter = { this.handleFilter } />
                     </div>
                 </div>
             </div>
@@ -184,4 +187,12 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => {
+    return { tasks : state.task }
+}
+
+const mapDispatchToProps = dispatch => {
+    return { action : bindActionCreators(showTask, dispatch) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
