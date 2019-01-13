@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { editTask } from '../actions/index';
+import { connect } from 'react-redux';
 
 class ListItem extends Component {
     deleteItem = () => {
         this.props.deleteItem(this.props.task.id);
     }
     updateItem = () => {
-        this.props.updateItem(this.props.task.id);
+        this.props.editItem(this.props.task.id);
     }
     render() {
         var { task, index } = this.props;
@@ -23,4 +25,12 @@ class ListItem extends Component {
     }
 }
 
-export default ListItem;
+const mapDispatchToProps = dispatch => {
+    return {
+        editItem : idTask => {
+            dispatch(editTask(idTask));
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(ListItem);

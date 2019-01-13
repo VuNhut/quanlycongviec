@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import ListItem from './ListItem';
 import ListItemNone from './ListItemNone';
-import { showTask } from '../actions/index';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 class List extends Component {
@@ -27,11 +25,12 @@ class List extends Component {
         var { tasks } = this.props;
         var { filterName } = this.state;
         var elem;
+        console.log(tasks);
         if (tasks.length === 0) {
             elem = <ListItemNone></ListItemNone>;
         } else {
             elem = tasks.map((task, index) => {
-                return <ListItem key= { task.id } index= { index } task= {task} deleteItem = { this.props.deleteItem } updateItem = { this.props.updateItem } />;
+                return <ListItem key= { task.id } index= { index } task= {task} deleteItem = { this.props.deleteItem } />;
             });
         }
         return (
@@ -68,10 +67,4 @@ const mapStateToProps = state => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        action : bindActionCreators(showTask, dispatch)
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(List);
+export default connect(mapStateToProps)(List);

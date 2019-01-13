@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { addTask } from '../actions';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 class TaskForm extends Component {
@@ -14,27 +13,27 @@ class TaskForm extends Component {
         }
     }
 
-    componentDidMount() {
-        var { task } = this.props;
-        if(task.id !== "") {
-            this.setState({
-                id: task.id,
-                name: task.name,
-                status: task.status
-            })
-        }
-    }
+    // componentDidMount() {
+    //     var { task } = this.props;
+    //     if(task.id !== "") {
+    //         this.setState({
+    //             id: task.id,
+    //             name: task.name,
+    //             status: task.status
+    //         })
+    //     }
+    // }
 
-    componentDidUpdate(prevProps, prevState) {
-        var { task } = this.props;
-        if(prevProps.task.id !== task.id && task.id !== prevState.id) {
-            this.setState({
-                id: task.id,
-                name: task.name,
-                status: task.status
-            })
-        }
-    }    
+    // componentDidUpdate(prevProps, prevState) {
+    //     var { task } = this.props;
+    //     if(prevProps.task.id !== task.id && task.id !== prevState.id) {
+    //         this.setState({
+    //             id: task.id,
+    //             name: task.name,
+    //             status: task.status
+    //         })
+    //     }
+    // }    
     
     closeForm = () => {
         this.props.closeForm();
@@ -54,7 +53,7 @@ class TaskForm extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        
+        this.props.handleAddTask(this.state);
         this.closeForm();
     }
 
@@ -99,16 +98,12 @@ class TaskForm extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        task : state.task
-    }
-}
-
 const mapDispatchToProps = dispatch => {
     return {
-        action : bindActionCreators(addTask, dispatch)
+        handleAddTask : task => {
+            dispatch(addTask(task));
+        }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TaskForm);
+export default connect(null, mapDispatchToProps)(TaskForm);
